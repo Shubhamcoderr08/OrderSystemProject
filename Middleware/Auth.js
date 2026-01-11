@@ -5,7 +5,7 @@ dotenv.config()
 export const Authenticated = async (req,res,next)=>{
 try {
  let token;
- let authHeader = req.header("Auth")
+ let authHeader = req.header("Authorization")
 if(authHeader && authHeader.startsWith("Bearer")){
   token = authHeader.split(" ") [1]
 }

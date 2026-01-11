@@ -56,7 +56,7 @@ export const addToCart = async (req,res)=>{
       item.productId.toString() === productId);
 
   if(itemIndex >-1){
-      cart.items[itemIndex].quantity+=quantity;
+      cart.items[itemIndex].quantity+=1;
       cart.items[itemIndex].price+=price *quantity; 
   }
   else{
@@ -72,7 +72,7 @@ export const addToCart = async (req,res)=>{
 export const myCart = async(req,res) =>{
  try {
    const userId = req.user._id
-  let cart = await Cart.findOne({user:userId})
+  let cart = await Cart.findOne({userId})
   if(!cart){
      return res.status(404).json({message:"Cart Not Found",success:false})
   }
@@ -130,7 +130,7 @@ export const deleteProductfromCart = async (req,res)=>{
   try {
     let userId = req.user._id
   let productId = req.params.productId
-  let cart = await Cart.finOne({userId})
+  let cart = await Cart.findOne({userId})
   if(!cart){
     return res.status(404).json({message:"Cart Not Found",success:false})
   }

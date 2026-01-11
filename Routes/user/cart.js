@@ -26,7 +26,7 @@ router.delete("/clearCart",Authenticated,AuthorizeRole("user"),clearCart)
 
 // decrease quantity of a Product
 
-router.post("/--qty",decreaseProductQty)
+router.post("/--quantity",decreaseProductQty)
 
 export default router
 
