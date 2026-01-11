@@ -15,6 +15,7 @@ catch (error) {
 
 }
 
+console.log("all user Id Details")
 // get user by userId
 
 export const  getUser = async(req,res)=>{
