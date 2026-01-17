@@ -5,8 +5,8 @@ import { allOrders, getOrder, updateOrderStatus } from "../../Controllers/Admin/
 
 const router = express.Router()
 
-router.use(Authenticated)
-router.use(AuthorizeRole("admin"))
+// router.use(Authenticated)
+// router.use(AuthorizeRole("admin"))
 
 // get all orders
 router.get("/allOrders",allOrders)

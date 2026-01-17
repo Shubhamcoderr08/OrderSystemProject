@@ -4,20 +4,21 @@ import dotenv from "dotenv"
 dotenv.config()
 export const Authenticated = async (req,res,next)=>{
 try {
- let token;
- let authHeader = req.header("Authorization")
+ let Accesstoken;
+ let authHeader = req.header("Authorization") 
 if(authHeader && authHeader.startsWith("Bearer")){
-  token = authHeader.split(" ") [1]
+  Accesstoken = authHeader.split(" ") [1]
 }
-
-if(!token){
+  
+if(!Accesstoken){
   return res.status(401).json({message:"Login First",success:false})
 }
-const verifythetoken = jwt.verify(token,process.env.JWT_SECRET)
+const verifytheAccesstoken = jwt.verify(Accesstoken,process.env.AccessToken_Key)
 
-const id = verifythetoken.userId
+const id = verifytheAccesstoken.userId
 
 let user = await User.findById(id)
+
 if(!user){
   return res.status(401).json({message:"User Not Found"})
 }
@@ -26,9 +27,15 @@ next()
 
 }
 
+
 catch(error){
- res.status(401).json({messagae:"Invalid or expired token",sucess:false})
-}
+   res.status(401).json({messagae:"Invalid or expired token",success:false})
+  }
 
 
 }
+
+
+
+
+

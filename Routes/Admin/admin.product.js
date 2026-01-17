@@ -13,7 +13,7 @@ router.use(Authenticated)
 router.use(AuthorizeRole("admin"))
 
 // add product
-router.post("/addProduct",addProduct)
+router.post("/addProduct",AuthorizeRole("admin"),addProduct)
 
 // get all Products
 router.get("/allProducts",allProduct)

@@ -65,7 +65,7 @@ res.status(200).json({message:"OrderStatus Updated Successfully",order,success:t
 
 
 catch (error) {
- res.status(500).json({message:"Server Error",error:error.message,success:false}) 
+  res.status(500).json({message:"Server Error",error:error.message,success:false}) 
 }
 
 }

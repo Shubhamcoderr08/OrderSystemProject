@@ -2,6 +2,7 @@ import mongoose from "mongoose"
 import express from "express"
 import bodyParser from  "express"
 import dotenv from "dotenv"
+import cookieParser from "cookie-parser"
 import { connectDB } from "./config/db.js"
 dotenv.config();
 connectDB()
@@ -20,6 +21,8 @@ import AdminproductRouter from "./Routes/Admin/admin.product.js"
 import AdminorderRouter from "./Routes/Admin/admin.order.js"
 
 const app = express()
+
+app.use(cookieParser());
 
 app.use(bodyParser.json())
 
