@@ -1,5 +1,6 @@
 import express from "express"
 import {register,login,refreshAccessToken, logoutUser} from "../../Controllers/user/user.js"
+import { verifyOTP,ResendOTP } from "../../Controllers/user/user.js"
 import { Authenticated } from "../../Middleware/Auth.js"
 const router = express.Router()
 
@@ -7,8 +8,14 @@ const router = express.Router()
 
 router.post("/register",register)
 
-// login router
+// Verify OTP
+router.post("/verifyOTP",verifyOTP)
 
+//Resend OTP
+router.post("/ResendOTP",ResendOTP) 
+
+
+// login router
 router.post("/login",login)
 
 // router.get("/protectedd",Authenticated,protectedd)
