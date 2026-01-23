@@ -4,6 +4,12 @@ import bodyParser from  "express"
 import dotenv from "dotenv"
 import cookieParser from "cookie-parser"
 import { connectDB } from "./config/db.js"
+import mongoSanitize from "express-mongo-sanitize"
+import helmet from "helmet"
+// import xss from "xss-clean"
+// app.use(xss())
+
+
 dotenv.config();
 connectDB()
 
@@ -22,8 +28,9 @@ import AdminorderRouter from "./Routes/Admin/admin.order.js"
 
 const app = express()
 
+app.use(helmet())
+// app.use(mongoSanitize()) => not working due to outdated version in my project
 app.use(cookieParser());
-
 app.use(bodyParser.json())
 
 console.log("change in git code")

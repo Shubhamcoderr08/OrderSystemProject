@@ -5,8 +5,6 @@ import jwt from "jsonwebtoken"
 import { generateAccesstoken,generateRefreshtoken } from "../../utils/token.js";
 import nodemailer from "nodemailer"
 import crypto from "crypto"
-
-
 import dotenv from "dotenv"
 dotenv.config()
 
@@ -83,7 +81,7 @@ export const register = async (req,res)=>{
 export const verifyOTP = async(req,res)=>{
  try {
   const {email,otp} = req.body
- 
+
   let user = await User.findOne({email})
 
 
