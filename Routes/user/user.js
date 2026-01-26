@@ -3,8 +3,9 @@ import {register,login,refreshAccessToken, logoutUser} from "../../Controllers/u
 import { verifyOTP,ResendOTP } from "../../Controllers/user/user.js"
 import { Authenticated } from "../../Middleware/Auth.js"
 import { loginLimiter } from "../../Middleware/ratelimiter.js"
-import { loginSchema,registerSchema,verifyOtpSchema,resendOtpSchema } from "../../ValidationSchema/auth.validation.js"
+import { loginSchema,registerSchema,verifyOtpSchema,resendOtpSchema,changePasswordSchema,forgetPasswordSchema} from "../../ValidationSchema/auth.validation.js"
 import { validate } from "../../Middleware/validate.js"
+import { changePassword,forgetPassword } from "../../Controllers/user/user.js"
 const router = express.Router()
 
 // register router
@@ -24,6 +25,13 @@ router.post("/login",loginLimiter,validate(loginSchema),login)
 
 // refreshAccessToken
 router.post("/renewAccess",refreshAccessToken)
+
+// change password
+router.post("/changePassword",Authenticated,validate(changePasswordSchema),changePassword)
+
+// forget password
+router.post("/forgetPassword",validate(forgetPasswordSchema),forgetPassword)
+
 
 // logout the user
 router.post("/logoutUser",Authenticated,logoutUser)

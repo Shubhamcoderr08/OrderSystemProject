@@ -6,6 +6,7 @@ import { generateAccesstoken,generateRefreshtoken } from "../../utils/token.js";
 import nodemailer from "nodemailer"
 import crypto from "crypto"
 import dotenv from "dotenv"
+import { success } from "zod";
 dotenv.config()
 
 // Email transporter setup
@@ -258,7 +259,121 @@ catch (error) {
  
  }
 
+// change password
 
+export const changePassword = async (req,res)=>{
+try {
+  const {oldPassword,newPassword} = req.body
+  let userId = req.user._id
+  if(!oldPassword || !newPassword){
+     return res.status(400).json({message:"Provide all Required fields!!",success:false})
+  }
+
+let user = await User.findById(userId)
+if(!user){
+  return res.status(401).json({message:"unauthorized access!!,success:false"})
+}
+let verifyoldpassword = await bcrypt.compare(oldPassword,user.password)
+if(!verifyoldpassword){
+ return res.status(400).json({message:"old password is incorrect",success:false})
+}
+
+let issame = await bcrypt.compare(newPassword,user.password)
+if(issame){
+  return res.status(400).json({message:"New password must be different from old Password"})
+}
+
+let hashnewpassword = await bcrypt.hash(newPassword,10)
+
+user.password = hashnewpassword
+user.refreshToken = undefined;
+user.save()
+
+res.status(200).json({message:"Password Changed Successfully",})
+}
+
+catch (error) {
+  return res.status(500).json({message:"Server Error",success:false})
+}
+  
+}
+
+// forget password
+
+export const forgetPassword = async (req,res) =>{
+try {
+  const {email,otp,newPassword} = req.body
+
+ if(!email){
+  return res.status(400).json({message:"Email is Required",success:false})
+ }
+
+ let user = await User.findOne({email})
+ if(!user){
+  return res.status(404).json({message:"User not found",success:false})
+ }
+
+ if(!otp && !newPassword){
+  const generateotp =  crypto.randomInt(100000,1000000).toString()
+    let hashotp = crypto.createHash("sha256").update(generateotp).digest("hex")
+    const otpExpiry = new Date(Date.now() + 5 * 60 * 1000 )
+    user.otp = hashotp
+    user.otpExpiry = otpExpiry
+    await user.save()
+
+    // now send mail to the user 
+
+  const transporter = nodemailer.createTransport({
+  service:"gmail",
+  auth:{
+    user:process.env.EmailUser_Key,
+    pass: process.env.EmailPass_Key
+  }
+})
+
+await transporter.sendMail({
+     from:process.env.EmailUser_Key,
+     to: user.email,
+     subject:`OTP Verification for Resetting Paswword`,
+    //  text: `Your OTP ${otp}`
+     html:`<p>Your OTP is <strong>${generateotp}</strong></p> <p>This OTP is valid for 5 minutes.</p>`
+})
+ return res.status(200).json({message:"OTP Sent to Mail,Verify the otp",success:false})
+  }
+ if(!otp || !newPassword){
+  return res.status(400).json({message:"OTP and New Password are required",success:true})
+ }
+  // now verify the otp
+  if(!user.otpExpiry || user.otpExpiry < Date.now()){
+   return res.status(400).json({message:"OTP Expired",success:false})
+ }
+
+  let hashincomingotp = crypto.createHash("sha256").update(otp).digest("hex")
+
+  if(user.otp !== hashincomingotp){
+    return res.status(400).json({message:"Invalid OTP",success:true})
+  }
+
+  let updatedPassword = await bcrypt.hash(newPassword,10)
+  user.password = updatedPassword
+
+  user.otp = undefined
+  user.otpExpiry = undefined
+
+  user.refreshToken = undefined
+  
+  await user.save()
+   return res.status(200).json({message:"Password Reset Successfully",success:true})
+}
+
+
+catch (error) {
+  console.log(error)
+  res.status(500).json({message:"Server error",success:false})
+}
+
+
+}
 
  // logout the  User
 
