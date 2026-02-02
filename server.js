@@ -6,10 +6,9 @@ import cookieParser from "cookie-parser"
 import { connectDB } from "./config/db.js"
 import mongoSanitize from "express-mongo-sanitize"
 import helmet from "helmet"
+import { errorHandler } from "./Middleware/globalerror.js"
 // import xss from "xss-clean"
 // app.use(xss())
-
-
 dotenv.config();
 connectDB()
 
@@ -57,9 +56,9 @@ app.use("/api/admin",AdminusersRouter)
 app.use("/api/admin",AdminproductRouter)
 app.use("/api/admin",AdminorderRouter)
 
-
+// global error middleware
+app.use(errorHandler);
 const PORT = process.env.PORT || 5000
-
 app.listen(PORT,()=>console.log(`Server is listening on port ${process.env.PORT}`))
 
 
@@ -68,7 +67,6 @@ app.listen(PORT,()=>console.log(`Server is listening on port ${process.env.PORT}
 //  // home Testing route
 // app.get("/",(req,res)=> res.json({
 //    message:"This is the Home Route"
-
 // }))
 
 

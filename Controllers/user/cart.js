@@ -1,6 +1,9 @@
 import mongoose from "mongoose"
 
 import {Cart} from "../../Models/Cart.js"
+import { asyncHandler } from "../../utils/AsyncHandler.js"
+import { ApiError } from "../../utils/error.js"
+import { ApiResponse } from "../../utils/response.js"
 
 
 // addProduct to the cart
@@ -43,7 +46,7 @@ import {Cart} from "../../Models/Cart.js"
 // }
 
 // add
-export const addToCart = async (req,res)=>{
+export const addToCart = asyncHandler(async (req,res)=>{
   const {productId,productName,description,price,quantity} = req.body
   // const userId = req.user;
     const userId = req.user._id;
@@ -65,34 +68,43 @@ export const addToCart = async (req,res)=>{
 
 
   await cart.save();
-  res.status(201).json({message:"Items Added to Cart",cart})
+  // res.status(201).json({message:"Items Added to Cart",cart})
+  res.status(201).json(new ApiResponse(201,"Items Added to Cart",cart))
   
-  }
+  })
+
+
+
 // show my cart
-export const myCart = async(req,res) =>{
- try {
-   const userId = req.user._id
+export const myCart = asyncHandler(async(req,res) =>{
+//  try {
+  const userId = req.user._id
   let cart = await Cart.findOne({userId})
   if(!cart){
-     return res.status(404).json({message:"Cart Not Found",success:false})
+    //  return res.status(404).json({message:"Cart Not Found",success:false})
+    throw new ApiError(404,"Cart Not Found")
   }
 
-  res.status(200).json({message:"Your Cart",cart,success:false})
- } 
- catch (error) {
-  res.status(500).json({message:"Server Error",success:false})
- }
-}
+  // res.status(200).json({message:"Your Cart",cart,success:false})
+  res.status(200).json(new ApiResponse(200,"Your Cart",cart))
+//  } 
+
+//  catch (error) {
+//   res.status(500).json({message:"Server Error",success:false})
+//  }
+
+})
 
 
 
 // decrease quantity from Cart,decreaseProductQty
-export const decreaseProductQty = async (req,res)=>{
+export const decreaseProductQty = asyncHandler(async (req,res)=>{
   const {productId,quantity} = req.body;
   const userId = req.user._id
   let cart  = await Cart.findOne({userId})
     if(!cart){
-  res.status(404).json({message:"Cart Not Found"})
+  // res.status(404).json({message:"Cart Not Found"})
+  throw new ApiError(404,"Cart Not Found")
     }
  const itemIndex= cart.items.findIndex((item)=>{
  return item.productId.toString() === productId
@@ -113,11 +125,14 @@ export const decreaseProductQty = async (req,res)=>{
   
  }
  else{
-  return res.status(400).json({message:"Invalid Product Id"})
+  // return res.status(400).json({message:"Invalid Product Id"})
+  throw new ApiError(404,"Invalid ProductId")
  }
  await cart.save()
- res.status(200).json({message:"Product Quantity Decreased Succesfully",cart,success:true})
-}
+//  res.status(200).json({message:"Product Quantity Decreased Succesfully",cart,success:true})
+   res.status(200).json(new ApiResponse(200,"Product Quantity Decreased Successfully"))
+
+})
 
 
 
@@ -189,39 +204,43 @@ export const decreaseProductQty = async (req,res)=>{
 
 // clear items of the cart if User needs 
 
-export const clearCart = async(req,res) =>{
-try {
+export const clearCart = asyncHandler(async(req,res) =>{
+// try {
   let userId = req.user._id
 
 const cart  = await Cart.findOne({userId})
   
 if(!cart){
-  return res.status(404).json({message:"Cart Not Found",success:false})
+  // return res.status(404).json({message:"Cart Not Found",success:false})`
+  throw new ApiError(404,"Cart Not Found")
 }
 
 cart.items = [];
 await cart.save()
-res.status(200).json({message:"Cart Cleared Successfully",success:true})
+// res.status(200).json({message:"Cart Cleared Successfully",success:true})
+ res.status(200).json(new ApiResponse(200,"Cart Cleared Successfully"))
 
-} 
+// } 
 
 
-catch (error) {
-   res.status(500).json({message:"Server Error",success:false})
-}
-}
+// catch (error) {
+//    res.status(500).json({message:"Server Error",success:false})
+// }
+})
 
-export const deleteProductfromCart = async (req,res)=>{
-  try {
+export const deleteProductfromCart = asyncHandler(async (req,res)=>{
+  // try {
     let userId = req.user._id
   let productId = req.params.productId
   let cart = await Cart.findOne({userId})
   if(!cart){
-    return res.status(404).json({message:"Cart Not Found",success:false})
+    // return res.status(404).json({message:"Cart Not Found",success:false})
+    throw new ApiError(404,"Cart Not Found")
   }
 
   if(!cart.items || cart.items===0){
-    return res.status(400).json({message:"Cart is Empty",success:false})
+    // return res.status(400).json({message:"Cart is Empty",success:false})
+    throw new ApiError(400,"Cart is Empty")
   }
 
   
@@ -232,14 +251,15 @@ export const deleteProductfromCart = async (req,res)=>{
 
   
   await cart.save()
-  res.status(200).json({message:"Product Deleted from Cart",success:true})
-  } 
+  // res.status(200).json({message:"Product Deleted from Cart",success:true})
+      res.status(200).json(new ApiResponse(200,"Product Deleted from Cart"))
+  // } 
   
   
-  catch (error) {
-    res.status(500).json({message:"Server Error",success:false})
-  }
-}
+  // catch (error) {
+  //   res.status(500).json({message:"Server Error",success:false})
+  // }
+})
 
 
 

@@ -1,41 +1,59 @@
 import mongoose from "mongoose"
-
+import { asyncHandler } from "../../utils/AsyncHandler.js"
+import { ApiError } from "../../utils/error.js"
+import { ApiResponse } from "../../utils/response.js"
 import {Product} from "../../Models/Product.js"
 
 
 
 // get all products
-export const getallProducts = async (req,res)=>{
+export const getallProducts = asyncHandler(async (req,res)=>{
 
-try {
+// try {
 let products = await Product.find().sort({createdAt:-1})
-res.status(200).json({message:"All Products",products,success:true})
-} 
+// res.status(200).json({message:"All Products",products,success:true})
+   res.status(200).json(
+    new ApiResponse(200,"All Products",products)
+   )
+   
+// } 
 
-catch (error) {
-  res.status(500).json({message:"Server Error",error:error.message,sucess:false}) 
- }
+// catch (error) {
+  //res.status(500).json({message:"Server Error",error:error.message,sucess:false}) 
+  
+//  }
+})
 
 
-}
 
 
 // get product By Id
-export const getProductbyId = async (req,res)=>{
- try {
+export const getProductbyId = asyncHandler(async (req,res)=>{
+//  try {
   let productId = req.params.productId
   let product = await Product.findById(productId)
+
+  // if (!mongoose.Types.ObjectId.isValid(productId)) {
+  // throw new ApiError(400, "Invalid Product ID");
+  // }
+
   if(!product){
-   return res.status(404).json({message:"Product Not Found",success:false})
+  //  return res.status(404).json({message:"Product Not Found",success:false})
+  throw new ApiError(404,"Product Not Found")
   }
  
-res.status(200).json({message:"Product",product,success:true})
- } 
+// res.status(200).json({message:"Product",product,success:true})
+   res.status(200).json(
+    new ApiResponse(200,"Product",product)
+   )
+//  } 
  
- catch (error) {
-   res.status(500).json({message:"Server Error",error:error.message,success:false}) 
-}
-   }
+//  catch (error) {
+  //  res.status(500).json({message:"Server Error",error:error.message,success:false}) 
+// }
+
+
+   })
 
 
 
