@@ -27,6 +27,7 @@ import AdminproductRouter from "./Routes/Admin/admin.product.js"
 import AdminorderRouter from "./Routes/Admin/admin.order.js"
 
 const app = express()
+app.set("trust proxy", 1);
 app.get("/", (req, res) => {
   res.status(200).json({
     success: true,
