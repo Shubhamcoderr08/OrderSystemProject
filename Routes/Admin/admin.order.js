@@ -9,12 +9,6 @@ const router = express.Router()
 // router.use(AuthorizeRole("admin"))
 
 // get all orders
-router.get("/allOrders",allOrders)
 
-//get order by Id
-router.get("/getOrders/:orderId",getOrder)
-
-//update orderStatus by Id
-router.put("/UpdateOrderStatus/:orderId",updateOrderStatus)
 
 export default router

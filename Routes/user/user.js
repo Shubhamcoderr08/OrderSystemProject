@@ -8,8 +8,6 @@ import { validate } from "../../Middleware/validate.js"
 import { changePassword,forgetPassword } from "../../Controllers/user/user.js"
 const router = express.Router()
 
-// register router
-
 router.post("/register",validate(registerSchema),register)
 
 // Verify OTP

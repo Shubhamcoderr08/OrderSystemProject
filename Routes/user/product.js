@@ -6,9 +6,7 @@ import {getallProducts,getProductbyId } from "../../Controllers/user/product.js"
 // import { AuthorizeRole } from "../../Middleware/AuthourizeRole.js"
 const router = express.Router()
 
-
-
-// all products
+// All products
 
 router.get("/allProducts",getallProducts)
 

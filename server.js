@@ -7,6 +7,7 @@ import { connectDB } from "./config/db.js"
 import mongoSanitize from "express-mongo-sanitize"
 import helmet from "helmet"
 import { errorHandler } from "./Middleware/globalerror.js"
+// import { swaggerSpec,swaggerUi } from "./config/swagger.js"
 // import xss from "xss-clean"
 // app.use(xss())
 dotenv.config();
@@ -26,6 +27,13 @@ import AdminproductRouter from "./Routes/Admin/admin.product.js"
 import AdminorderRouter from "./Routes/Admin/admin.order.js"
 
 const app = express()
+app.get("/", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "OrderSystem API is working fine!",
+    
+  });
+});
 
 app.use(helmet())
 // app.use(mongoSanitize()) => not working due to outdated version in my project
@@ -56,8 +64,11 @@ app.use("/api/admin",AdminusersRouter)
 app.use("/api/admin",AdminproductRouter)
 app.use("/api/admin",AdminorderRouter)
 
+// app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 // global error middleware
 app.use(errorHandler);
+
 const PORT = process.env.PORT || 5000
 app.listen(PORT,()=>console.log(`Server is listening on port ${process.env.PORT}`))
 
