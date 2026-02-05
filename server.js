@@ -6,13 +6,24 @@ import cookieParser from "cookie-parser"
 import { connectDB } from "./config/db.js"
 import mongoSanitize from "express-mongo-sanitize"
 import helmet from "helmet"
+// import rateLimit from "express-rate-limit";
 import { errorHandler } from "./Middleware/globalerror.js"
 // import { swaggerSpec,swaggerUi } from "./config/swagger.js"
 // import xss from "xss-clean"
 // app.use(xss())
 dotenv.config();
 connectDB()
+const app = express()
+app.set("trust proxy", 1);
 
+// const globalLimiter = rateLimit({
+//   windowMs: 15 * 60 * 1000,
+//   max: 100,
+//   standardHeaders: true,
+//   legacyHeaders: false,
+// });
+
+// app.use(globalLimiter);
 
 // Routes  For Users
 import userRouter from "./Routes/user/user.js"
@@ -26,8 +37,6 @@ import AdminusersRouter from "./Routes/Admin/admin.user.js"
 import AdminproductRouter from "./Routes/Admin/admin.product.js"
 import AdminorderRouter from "./Routes/Admin/admin.order.js"
 
-const app = express()
-app.set("trust proxy", 1);
 app.get("/", (req, res) => {
   res.status(200).json({
     success: true,

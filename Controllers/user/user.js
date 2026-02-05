@@ -10,18 +10,20 @@ import { success } from "zod";
 import { ApiError } from "../../utils/error.js";
 import { ApiResponse } from "../../utils/response.js";
 import { asyncHandler } from "../../utils/AsyncHandler.js";
+import { sendOTPEmail } from "../../utils/SendEmail.js";
 
 dotenv.config()
 
 // Email transporter setup
 
-const transporter = nodemailer.createTransport({
-  service:"gmail",
-  auth:{
-    user:process.env.EmailUser_Key,
-    pass: process.env.EmailPass_Key
-  }
-})
+// const transporter = nodemailer.createTransport({
+//   service:"gmail",
+//   auth:{
+//     user:process.env.EmailUser_Key,
+//     pass: process.env.EmailPass_Key
+//   }
+// })
+
 
 //generate OTP
 
@@ -59,19 +61,19 @@ export const register = asyncHandler(async (req,res)=>{
     user = await User.create({username,email,password:hashPassword,role,otp:hashotp,otpExpiry})
 
     await user.save()
-
-   await transporter.sendMail({
-     from:process.env.EmailUser_Key,
-     to: user.email,
-     subject:`OTP Verification`,
-    //  text: `Your OTP ${otp}`
-     html:`<p>Your OTP is <strong>${otp}</strong></p> <p>This OTP is valid for 5 minutes.</p>`
+     
+  //  await transporter.sendMail({
+  //    from:process.env.EmailUser_Key,
+  //    to: user.email,
+  //    subject:`OTP Verification`,
+  //   //  text: `Your OTP ${otp}`
+  //    html:`<p>Your OTP is <strong>${otp}</strong></p> <p>This OTP is valid for 5 minutes.</p>`
 
 
 
     
-   })
-
+  //  })
+    sendOTPEmail(user.email, otp)
     // res.status(201).json({message:"OTP sent to Email,Please Verify",success:true})
     res.status(201).json(new ApiResponse(201,"OTP sent to Email,Please Verify"))
 
@@ -100,7 +102,8 @@ export const verifyOTP = asyncHandler(async(req,res)=>{
 
   if(!user){
   //  return res.status(404).json({message:"User Not Found",success:false})
-  throw new ApiResponse("User Not Found")
+  throw new ApiResponse(404,"User Not Found")
+  0
   }
   // isEmailVerified is true ,then ...................
   
@@ -158,20 +161,20 @@ if(user.isEmailVerified){
    user.otp = hashotp
    user.otpExpiry = new Date (Date.now() + 5 * 60 * 1000)
    await user.save();
+   
+
+  //  await transporter.sendMail({
+  //   from:process.env.EmailUser_Key,
+  //   to:user.email,
+  //   subject:`Resend OTP for Verification`,
+  //   // text:`Your Resend OTP:${otp},Do not reply to this mail Unless Needed`
+  //    html:`<p>Your OTP is <strong>${otp}</strong></p> <p>This OTP is valid for 5 minutes.</p>`
 
 
-   await transporter.sendMail({
-    from:process.env.EmailUser_Key,
-    to:user.email,
-    subject:`Resend OTP for Verification`,
-    // text:`Your Resend OTP:${otp},Do not reply to this mail Unless Needed`
-     html:`<p>Your OTP is <strong>${otp}</strong></p> <p>This OTP is valid for 5 minutes.</p>`
+  //  })
 
 
-   })
-
-
-
+sendOTPEmail(user.email, otp)
   //  res.status(201).json({message:"OTP Resent Successfully",success:true})
   res.status(201).json(new ApiResponse(201,"OTP Resent Successfully"))
 
@@ -360,21 +363,21 @@ export const forgetPassword = asyncHandler(async (req,res) =>{
 
     // now send mail to the user 
 
-  const transporter = nodemailer.createTransport({
-  service:"gmail",
-  auth:{
-    user:process.env.EmailUser_Key,
-    pass: process.env.EmailPass_Key
-  }
-})
-
-await transporter.sendMail({
-     from:process.env.EmailUser_Key,
-     to: user.email,
-     subject:`OTP Verification for Resetting Paswword`,
-    //  text: `Your OTP ${otp}`
-     html:`<p>Your OTP is <strong>${generateotp}</strong></p> <p>This OTP is valid for 5 minutes.</p>`
-})
+//   const transporter = nodemailer.createTransport({
+//   service:"gmail",
+//   auth:{
+//     user:process.env.EmailUser_Key,
+//     pass: process.env.EmailPass_Key
+//   }
+// })
+sendOTPEmail(user.email, otp)
+// await transporter.sendMail({
+//      from:process.env.EmailUser_Key,
+//      to: user.email,
+//      subject:`OTP Verification for Resetting Paswword`,
+//     //  text: `Your OTP ${otp}`
+//      html:`<p>Your OTP is <strong>${generateotp}</strong></p> <p>This OTP is valid for 5 minutes.</p>`
+// })
 //  return res.status(200).json({message:"OTP Sent to Mail,Verify the otp",success:false})
  return res.status(200).json(new ApiResponse(200,"OTP Sent to Mail,Verify the otp"))
   }

@@ -12,6 +12,7 @@ router.post("/register",validate(registerSchema),register)
 
 // Verify OTP
 router.post("/verifyOTP",validate(verifyOtpSchema),loginLimiter,verifyOTP)
+// router.post("/verifyOTP",validate(verifyOtpSchema),verifyOTP)
 
 //Resend OTP
 router.post("/ResendOTP",validate(resendOtpSchema),ResendOTP) 
