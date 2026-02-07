@@ -6,6 +6,8 @@ import {Product} from "../../Models/Product.js"
 import { ApiError } from "../../utils/error.js";
 import { ApiResponse } from "../../utils/response.js";
 import { asyncHandler } from "../../utils/AsyncHandler.js";
+import {client}   from "../../utils/redis.js"
+
 
 
 
@@ -65,6 +67,8 @@ export const PlaceOrder = asyncHandler(async (req, res) => {
     cart.items = [];
     cart.totalAmount = 0;
     await cart.save();
+   await client.del(`Order_${userId}`)
+   
 
     // res.status(201).json({
     //   message: "Order placed successfully",
@@ -96,6 +100,11 @@ export const MyOrders = asyncHandler(async (req,res) => {
   // try {
 
   const userId = req.user._id
+  const cacheKey = `MYorders_${userId}`
+  const cachemyorder = await client.get(cacheKey)
+  if(cachemyorder){
+    return res.status(200).json(new ApiResponse("Orders from Redis",JSON.parse(cachemyorder)))
+  }
   let orders = await Order.find({userId}).sort({createdAt:-1})
 
   if(!orders){
@@ -104,7 +113,7 @@ export const MyOrders = asyncHandler(async (req,res) => {
   }
 
   // res.status(200).json({message:"My Orders",orders,success:true})
-
+ await client.setex(cacheKey,30,JSON.stringify(orders))
   res.status(200).json(
     new ApiResponse(200,"My Orders",orders)
   )

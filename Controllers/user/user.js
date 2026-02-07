@@ -210,7 +210,7 @@ export const login = asyncHandler(async(req,res)=>{
       const accessToken =  generateAccesstoken(user)
       const refreshToken = generateRefreshtoken(user)
       
-      user = await User.findById(userId).select("-password -refreshToken")
+      user = await User.findById(userId).select("-password -refreshToken -otp -otpExpiry")
 
 // const token = jwt.sign({userId:user._id,role:user.role},process.env.JWT_SECRET,  { expiresIn:"365d",})
 // access and refresh token!!!!

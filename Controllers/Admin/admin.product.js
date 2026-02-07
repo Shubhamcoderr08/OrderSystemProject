@@ -3,6 +3,7 @@ import { Product } from "../../Models/Product.js"
 import { ApiError } from "../../utils/error.js";
 import { ApiResponse } from "../../utils/response.js";
 import { asyncHandler } from "../../utils/AsyncHandler.js";
+import {client}   from "../../utils/redis.js"
 
 // add Product
 
@@ -18,6 +19,7 @@ throw new ApiError(400,"Provide all Required Fields")
 res.status(201).json(new ApiResponse(201,"Product Added Successfully",product))
 
 // } 
+client.del("ALL_PRODUCTS")
 
 
 // catch (error) {
@@ -30,8 +32,15 @@ res.status(201).json(new ApiResponse(201,"Product Added Successfully",product))
 export const allProduct = asyncHandler(async(req,res)=>{
 
     // try {
+    const cachekey ="ALL_products"
+    const cacheProducts = await client.get(cachekey)
+    if(cacheProducts){
+      return res.status(200).json(new ApiResponse("All Products from Redis",JSON.parse(cacheProducts)))
+    }
+    //  Ye database query toh h
       let product = await Product.find().sort({createdAt:-1})
       // res.status(200).json({message:"All Products",product,success:true})
+      await client.setex(cachekey,90,JSON.stringify(product))
       res.status(200).json(new ApiResponse(200,"All Products",product))
     
     // } 
@@ -45,12 +54,20 @@ export const allProduct = asyncHandler(async(req,res)=>{
 
 export const getProduct = asyncHandler(async(req,res)=>{
 // try {
-  let productId = req.params.productId    
-let product = await Product.findById(productId)
-if(!product){
-  //  return res.status(404).json({message:"Product Not Found",success:false})
-  throw new ApiError(404,"Product Not Found")
-}
+  let productId = req.params.productId
+  const cacheKey =`Product_${productId}`
+  const cachedProduct = await client.get(cachedProduct) 
+  if(cachedProduct){
+    return res.status(200).json(new ApiResponse(200,"Product from Redis",JSON.parse(cachedProduct)))
+  }
+  if(!product){ 
+    //  return res.status(404).json({message:"Product Not Found",success:false})
+    throw new ApiError(404,"Product Not Found")
+  }
+  
+  let product = await Product.findById(productId)
+
+  await client.setex(cacheKey,180,JSON.stringify(product))
 // res.status(200).json({message:"Product",product,success:true})
  res.status(200).json(new ApiResponse(200,"Product",product))
 
@@ -72,6 +89,9 @@ if(!product){
   // return res.status(404).json({message:"Product Not Found",success:false})
   throw new ApiError(404,"Product Not Found")
 }
+// client.del("ALL_PRODUCTS")
+
+client.del(`PRODUCT_${productId}`)
 // res.status(200).json({message:"Product Deleted SuccessFully",product,success:false})
 res.status(200).json(new ApiResponse(200,"Product Deleted Succesfully",product))
 // } 
@@ -96,6 +116,9 @@ if(!product){
     // return res.status(404).json({message:"Product Not Found",success:false})
     throw new ApiError(404,"Product Not Found")
 }
+// client.del("ALL_PRODUCTS")
+
+client.del(`PRODUCT_${productId}`)
 // res.status(200).json({message:"Product Updated Successfully",product,success:true})
  res.status(200).json(new ApiResponse(200,"Product Updated Successfully",product))
 

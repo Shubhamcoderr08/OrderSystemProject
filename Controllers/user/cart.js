@@ -4,6 +4,7 @@ import {Cart} from "../../Models/Cart.js"
 import { asyncHandler } from "../../utils/AsyncHandler.js"
 import { ApiError } from "../../utils/error.js"
 import { ApiResponse } from "../../utils/response.js"
+import {client}   from "../../utils/redis.js"
 
 
 // addProduct to the cart
@@ -68,6 +69,7 @@ export const addToCart = asyncHandler(async (req,res)=>{
 
 
   await cart.save();
+   await client.del(`CART_${userId}`)
   // res.status(201).json({message:"Items Added to Cart",cart})
   res.status(201).json(new ApiResponse(201,"Items Added to Cart",cart))
   
@@ -79,6 +81,13 @@ export const addToCart = asyncHandler(async (req,res)=>{
 export const myCart = asyncHandler(async(req,res) =>{
 //  try {
   const userId = req.user._id
+  const cacheKey = "My_Cart"
+  const cacheMycart = await client.get(cacheKey)
+
+  if(cacheMycart){
+ return res.status(200).json(new ApiResponse(200,"My Cart from Redis",JSON.parse(cacheMycart)))
+  }
+
   let cart = await Cart.findOne({userId})
   if(!cart){
     //  return res.status(404).json({message:"Cart Not Found",success:false})
@@ -86,6 +95,8 @@ export const myCart = asyncHandler(async(req,res) =>{
   }
 
   // res.status(200).json({message:"Your Cart",cart,success:false})
+   await client.setex(cacheKey,15,JSON.stringify(cart))
+  
   res.status(200).json(new ApiResponse(200,"Your Cart",cart))
 //  } 
 
@@ -129,6 +140,7 @@ export const decreaseProductQty = asyncHandler(async (req,res)=>{
   throw new ApiError(404,"Invalid ProductId")
  }
  await cart.save()
+ await client.del(`CART_${userId}`)
 //  res.status(200).json({message:"Product Quantity Decreased Succesfully",cart,success:true})
    res.status(200).json(new ApiResponse(200,"Product Quantity Decreased Successfully"))
 
@@ -217,6 +229,7 @@ if(!cart){
 
 cart.items = [];
 await cart.save()
+await client.del(`CART_${userId}`)
 // res.status(200).json({message:"Cart Cleared Successfully",success:true})
  res.status(200).json(new ApiResponse(200,"Cart Cleared Successfully"))
 
@@ -251,6 +264,7 @@ export const deleteProductfromCart = asyncHandler(async (req,res)=>{
 
   
   await cart.save()
+  await client.del(`CART_${userId}`)
   // res.status(200).json({message:"Product Deleted from Cart",success:true})
       res.status(200).json(new ApiResponse(200,"Product Deleted from Cart"))
   // } 

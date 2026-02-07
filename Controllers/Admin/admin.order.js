@@ -6,14 +6,21 @@ import { Cart } from "../../Models/Cart.js"
 import { ApiError } from "../../utils/error.js";
 import { ApiResponse } from "../../utils/response.js";
 import { asyncHandler } from "../../utils/AsyncHandler.js";
+import {client}   from "../../utils/redis.js"
 
 // get all orders
 
 export const allOrders = asyncHandler(async (req,res)=>{
-
+ const cacheKey = "All Orders"
+ const cacheOrders = await client.get(cacheKey)
+ if(cacheOrders){
+  return res.status(200).json(new ApiResponse(200,"All Orders from Redis",JSON.parse(cacheOrders)))
+ }
   // try {}
   let order = await Order.find().sort({createdAt:-1})
   // res.status(200).json({message:"All Orders of Users",order,success:true})
+
+  await client.setex(cacheKey,120,JSON.stringify(order))
   res.status(200).json(new ApiResponse(200,"All Orders of Users",order))
 // }
 
@@ -28,12 +35,20 @@ export const allOrders = asyncHandler(async (req,res)=>{
 export  const getOrder = asyncHandler(async (req,res)=>{
 // try {
 let orderId = req.params.orderId
+const cacheKey = `Order_${orderId}`
+const cacheorder = await client.get(cacheKey)
+if(cacheorder){
+return res.status(200).json(new ApiResponse(200,"Order from Redis",JSON.parse(cacheorder)))
+}
 let order = await Order.findById(orderId)
 if(!order){
   // return  res.status(404).json({message:"No Orders Found",success:false})
   throw new ApiError(404,"No Orders Found")
 }
 // res.status(200).json({message:"Order Details",order,success:true})
+
+// using redis cache store
+await client.setex(cacheKey,300,JSON.stringify(order))
 res.status(200).json(new ApiResponse(200,"Order Details",order))
 // }
 
@@ -66,6 +81,8 @@ export const updateOrderStatus = asyncHandler(async (req,res)=>{
     throw new ApiError(404,"Order Not Found")
     
   }
+client.del("ADMIN_ALL_ORDERS")
+client.del(`ORDER_${orderId}`)
 
 // res.status(200).json({message:"OrderStatus Updated Successfully",order,success:true})
 res.status(200).json(new ApiResponse(200,"OrderStatus Updated Successfully",order))
