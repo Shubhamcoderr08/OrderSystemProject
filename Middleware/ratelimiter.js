@@ -1,30 +1,21 @@
-// import rateLimit from "express-rate-limit"
-
-// export const loginLimiter = rateLimit({
-//   windowMs: 15 * 60 * 1000, // 15 minutes ke time sirf 5 headers allowed hai!!!
-//   max: 5,                  // 5 attempts allowed!!!!
-//   message: {
-//     success: false,
-//     message: "Too many login attempts. Try again after 15 minutes"
-//   },
-//   standardHeaders: true,
-//   legacyHeaders: false
-// })
-
 import rateLimit from "express-rate-limit"
 import RedisStore from "rate-limit-redis"
 import {client} from "../utils/redis.js"
+import { ipKeyGenerator } from "express-rate-limit"
 
 export const loginLimiter = rateLimit({
   store: new RedisStore({
     sendCommand: (...args) => client.call(...args),
   }),
 
-  windowMs: 15 * 60 * 1000, // 15 minute mein
-  max: 5, // 5 attempts allowed only 
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5,
 
   keyGenerator: (req) => {
-    return req.body.email || req.ip
+    if (req.body?.email) {
+      return `login:${req.body.email}`
+    }
+    return ipKeyGenerator(req)
   },
 
   message: {
@@ -35,5 +26,3 @@ export const loginLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 })
-
-
