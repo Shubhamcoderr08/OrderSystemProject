@@ -6,6 +6,7 @@ import { AuthorizeRole } from "../../Middleware/AuthourizeRole.js"
 import router from "./admin.user.js"
 import { addProduct } from "../../Controllers/Admin/admin.product.js"
 import { allProduct, deleteProduct, getProduct, updateProduct } from "../../Controllers/Admin/admin.product.js"
+import { upload } from "../../Middleware/Multer.js"
  
 const app = express.Router()
 
@@ -13,7 +14,7 @@ router.use(Authenticated)
 router.use(AuthorizeRole("admin"))
 
 // add product
-router.post("/addProduct",AuthorizeRole("admin"),addProduct)
+router.post("/addProduct",AuthorizeRole("admin"),upload.single("image"),addProduct)
 
 // get all Products
 router.get("/allProducts",allProduct)

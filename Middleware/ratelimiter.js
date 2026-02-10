@@ -12,9 +12,9 @@ export const loginLimiter = rateLimit({
   max: 5,
 
   keyGenerator: (req) => {
-    if (req.body?.email) {
-      return `login:${req.body.email}`
-    }
+   if (req.body && req.body.email) {
+  return `login:${req.body.email}`
+}
     return ipKeyGenerator(req)
   },
 

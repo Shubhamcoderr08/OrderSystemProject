@@ -4,17 +4,27 @@ import { ApiError } from "../../utils/error.js";
 import { ApiResponse } from "../../utils/response.js";
 import { asyncHandler } from "../../utils/AsyncHandler.js";
 import {client}   from "../../utils/redis.js"
+import { uploadOnCloudinary } from "../../utils/cloudinaryUpload.js";
 
 // add Product
 
 export const addProduct = asyncHandler(async(req,res)=>{
 // try {
   const {productName,description,price,quantity} = req.body
-if(!productName || !description || !price || !quantity){
+if(!productName || !description || !price || !quantity || !req.file){
 //  return res.status(400).json({message:"Provide all Required Fields",success:false})
 throw new ApiError(400,"Provide all Required Fields")
 }
- let product = await Product.create({productName,description,price,quantity})
+// if(!req.file){
+//   throw new ApiError(404,"Product Image Required")
+// }
+const cloudinaryResponse = await uploadOnCloudinary(req.file.path)
+ let product = await Product.create({productName,description,price,quantity,
+  image:{
+   public_id:cloudinaryResponse.public_id,
+   url:cloudinaryResponse.secure_url
+  }
+ })
 //  res.status(201).json({message:"Product added Successfully",product,success:true})
 res.status(201).json(new ApiResponse(201,"Product Added Successfully",product))
 
