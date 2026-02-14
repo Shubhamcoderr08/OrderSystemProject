@@ -3,14 +3,14 @@ name: Build, Push & Deploy to Render
 on:
   push:
     branches:
-      - main   # Runs when code is pushed to main
+      - main
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout repository code
+      # 1️⃣ Checkout Repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -25,14 +25,21 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # 4️⃣ Build and Push Docker Image
-      - name: Build and Push Docker image
+      # 4️⃣ Extract Git Commit SHA (for version tagging)
+      - name: Extract commit SHA
+        id: vars
+        run: echo "SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+
+      # 5️⃣ Build and Push Docker Image
+      - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
-          tags: shubhamcoderr08/ordersystemproject:latest
+          tags: |
+            shubhamcoderr08/ordersystemproject:v1
+            shubhamcoderr08/ordersystemproject:${{ steps.vars.outputs.SHORT_SHA }}
 
-      # 5️⃣ Trigger Render Auto Deploy using Deploy Hook
+      # 6️⃣ Trigger Render Deploy
       - name: Trigger Render Deploy
         run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
