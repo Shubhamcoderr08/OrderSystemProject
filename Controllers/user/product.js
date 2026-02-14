@@ -18,7 +18,7 @@ export const getallProducts = asyncHandler(async (req,res)=>{
 
   const cachedProduct = await client.get(cacheKey)
   if(cachedProduct){
-    return res.status(200).json(new ApiResponse(200,"All products from redis",JSON.parse(cachedProduct)))
+    return res.status(200).json(new ApiResponse(200,"All products from rediss",JSON.parse(cachedProduct)))
   }
 
 
