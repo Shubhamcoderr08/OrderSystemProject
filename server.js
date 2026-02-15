@@ -40,7 +40,7 @@ import AdminorderRouter from "./Routes/Admin/admin.order.js"
 app.get("/", (req, res) => {
   res.status(200).json({
     success: true,
-    message: "OrderSystem API is working fine!!!",
+    message: "OrderSystem API is working fine!!!!",
     
   });
 });
@@ -50,7 +50,7 @@ app.use(helmet())
 app.use(cookieParser());
 app.use(bodyParser.json())
 
-console.log("change in git code")
+// console.log("change in git code")
 
 
 
@@ -77,9 +77,11 @@ app.use("/api/admin",AdminorderRouter)
 // app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // global error middleware
+
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000
+
 app.listen(PORT,"0.0.0.0",()=>console.log(`Server is listening on port ${process.env.PORT}`))
 
 
