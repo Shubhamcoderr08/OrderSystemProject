@@ -8,7 +8,7 @@ export const loginLimiter = rateLimit({
     sendCommand: (...args) => client.call(...args),
   }),
 
-  windowMs: 40 * 60 * 1000, // 15 minutes
+  windowMs: 15 * 60 * 1000, // 15 minutes
   max: 5,
 
   keyGenerator: (req) => {

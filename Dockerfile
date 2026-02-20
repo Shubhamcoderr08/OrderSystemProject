@@ -18,3 +18,5 @@ EXPOSE 8004
 # Start app
 CMD ["npm", "start"]
 
+
+

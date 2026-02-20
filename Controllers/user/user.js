@@ -2,15 +2,15 @@ import mongoose from "mongoose";
 import {User} from "../../Models/User.js"
 import  bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
-import { generateAccesstoken,generateRefreshtoken } from "../../utils/token.js";
+import { generateAccesstoken,generateRefreshtoken } from "../../Utils/token.js";
 import nodemailer from "nodemailer"
 import crypto from "crypto"
 import dotenv from "dotenv"
 import { success } from "zod";
-import { ApiError } from "../../utils/error.js";
-import { ApiResponse } from "../../utils/response.js";
-import { asyncHandler } from "../../utils/AsyncHandler.js";
-import { sendOTPEmail } from "../../utils/SendEmail.js";
+import { ApiError } from "../../Utils/error.js";
+import { ApiResponse } from "../../Utils/response.js";
+import { asyncHandler } from "../../Utils/asyncHandler.js";
+import { sendOTPEmail } from "../../Utils/sendEmail.js";
 
 dotenv.config()
 
@@ -275,11 +275,11 @@ const newRefreshToken = generateRefreshtoken(user)
  res
 .cookie("newAccessToken", newAccessToken,{
   httpOnly:true,
-  secure:true
+  secure: false
 })
 .cookie("newRefreshToken",newRefreshToken,{
    httpOnly:true,
-  secure:true
+  secure:false
 })
 .status(200)
 // .json({message:"Access token Refreshed Successfully",newAccessToken,newRefreshToken,success:true})
@@ -321,7 +321,6 @@ if(issame){
 }
 
 let hashnewpassword = await bcrypt.hash(newPassword,10)
-
 user.password = hashnewpassword
 user.refreshToken = undefined;
 user.save()

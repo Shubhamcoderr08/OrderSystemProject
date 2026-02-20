@@ -1,10 +1,10 @@
 import mongoose from "mongoose"
 
 import {Cart} from "../../Models/Cart.js"
-import { asyncHandler } from "../../utils/AsyncHandler.js"
-import { ApiError } from "../../utils/error.js"
-import { ApiResponse } from "../../utils/response.js"
-import {client}   from "../../utils/redis.js"
+import { asyncHandler } from "../../Utils/asyncHandler.js"
+import { ApiError } from "../../Utils/error.js"
+import { ApiResponse } from "../../Utils/response.js"
+import {client}   from "../../Utils/redis.js"
 
 
 // addProduct to the cart

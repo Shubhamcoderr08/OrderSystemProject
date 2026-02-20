@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
 import {User} from "../../Models/User.js"
-import { ApiError } from "../../utils/error.js";
-import { ApiResponse } from "../../utils/response.js";
-import { asyncHandler } from "../../utils/AsyncHandler.js";
-import {client}   from "../../utils/redis.js"
+import { ApiError } from "../../Utils/error.js";
+import { ApiResponse } from "../../Utils/response.js";
+import { asyncHandler } from "../../Utils/asyncHandler.js";
+import {client}   from "../../Utils/redis.js"
 // get all users
 
 export const allusers = asyncHandler(async (req,res)=>{

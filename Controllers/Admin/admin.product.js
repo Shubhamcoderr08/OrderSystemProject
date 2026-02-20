@@ -1,16 +1,16 @@
 import mongoose from "mongoose"
 import { Product } from "../../Models/Product.js"
-import { ApiError } from "../../utils/error.js";
-import { ApiResponse } from "../../utils/response.js";
-import { asyncHandler } from "../../utils/AsyncHandler.js";
-import {client}   from "../../utils/redis.js"
-import { uploadOnCloudinary } from "../../utils/cloudinaryUpload.js";
+import { ApiError } from "../../Utils/error.js";
+import { ApiResponse } from "../../Utils/response.js";
+import { asyncHandler } from "../../Utils/asyncHandler.js";
+import {client}   from "../../Utils/redis.js"
+import { uploadOnCloudinary } from "../../Utils/cloudinaryUpload.js";
 
 // add Product
 
 export const addProduct = asyncHandler(async(req,res)=>{
 // try {
-  const {productName,description,price,quantity} = req.body
+const {productName,description,price,quantity} = req.body
 if(!productName || !description || !price || !quantity || !req.file){
 //  return res.status(400).json({message:"Provide all Required Fields",success:false})
 throw new ApiError(400,"Provide all Required Fields")

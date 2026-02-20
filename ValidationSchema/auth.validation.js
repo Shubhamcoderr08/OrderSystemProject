@@ -24,6 +24,7 @@ export const loginSchema = z.object({
     .min(6, "Password must be at least 6 characters long"),
 }).strict();
 
+
 export const verifyOtpSchema = z.object({
   email: z
     .string()

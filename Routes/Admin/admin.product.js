@@ -1,12 +1,12 @@
 // Admin Product route
 
 import express from "express"
-import { Authenticated } from "../../Middleware/Auth.js"
-import { AuthorizeRole } from "../../Middleware/AuthourizeRole.js"
+import { Authenticated } from "../../Middleware/auth.js"
+import { AuthorizeRole } from "../../Middleware/authourizeRole.js"
 import router from "./admin.user.js"
 import { addProduct } from "../../Controllers/Admin/admin.product.js"
 import { allProduct, deleteProduct, getProduct, updateProduct } from "../../Controllers/Admin/admin.product.js"
-import { upload } from "../../Middleware/Multer.js"
+import { upload } from "../../Middleware/multer.js"
  
 const app = express.Router()
 

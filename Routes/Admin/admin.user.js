@@ -1,6 +1,6 @@
 import express from "express"
-import { Authenticated } from "../../Middleware/Auth.js"
-import { AuthorizeRole } from "../../Middleware/AuthourizeRole.js"
+import { Authenticated } from "../../Middleware/auth.js"
+import { AuthorizeRole } from "../../Middleware/authourizeRole.js"
 import { allusers, deleteUser, getUser } from "../../Controllers/Admin/admin.user.js"
 
 const router = express.Router()

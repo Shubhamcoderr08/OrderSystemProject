@@ -1,11 +1,11 @@
 import express from "express"
-import {register,login,refreshAccessToken, logoutUser} from "../../Controllers/user/user.js"
-import { verifyOTP,ResendOTP } from "../../Controllers/user/user.js"
-import { Authenticated } from "../../Middleware/Auth.js"
+import {register,login,refreshAccessToken, logoutUser} from "../../Controllers/User/user.js"
+import { verifyOTP,ResendOTP } from "../../Controllers/User/user.js"
+import { Authenticated } from "../../Middleware/auth.js"
 import { loginLimiter } from "../../Middleware/ratelimiter.js"
 import { loginSchema,registerSchema,verifyOtpSchema,resendOtpSchema,changePasswordSchema,forgetPasswordSchema} from "../../ValidationSchema/auth.validation.js"
 import { validate } from "../../Middleware/validate.js"
-import { changePassword,forgetPassword } from "../../Controllers/user/user.js"
+import { changePassword,forgetPassword } from "../../Controllers/User/user.js"
 const router = express.Router()
 
 router.post("/register",validate(registerSchema),register)

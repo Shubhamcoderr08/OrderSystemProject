@@ -17,7 +17,9 @@ export const sendOTPEmail = async (toEmail, otp) => {
         <p>This OTP is valid for 5 minutes.</p>
       `
     });
-  } catch (error) {
+  } 
+  
+  catch (error) {
     console.error("Resend Email Error:", error);
   }
 };

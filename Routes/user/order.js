@@ -1,7 +1,7 @@
 import express from "express"
-import { Authenticated } from "../../Middleware/Auth.js"
-import { PlaceOrder, MyOrders } from "../../Controllers/user/order.js"
-import { AuthorizeRole } from "../../Middleware/AuthourizeRole.js"
+import { Authenticated } from "../../Middleware/auth.js"
+import { PlaceOrder, MyOrders } from "../../Controllers/User/order.js"
+import { AuthorizeRole } from "../../Middleware/authourizeRole.js"
 const router = express.Router()
 
 router.use(Authenticated)

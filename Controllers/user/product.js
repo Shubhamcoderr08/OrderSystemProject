@@ -1,9 +1,9 @@
 import mongoose from "mongoose"
-import { asyncHandler } from "../../utils/AsyncHandler.js"
-import { ApiError } from "../../utils/error.js"
-import { ApiResponse } from "../../utils/response.js"
+import { asyncHandler } from "../../Utils/asyncHandler.js"
+import { ApiError } from "../../Utils/error.js"
+import { ApiResponse } from "../../Utils/response.js"
 import {Product} from "../../Models/Product.js"
-import {client}   from "../../utils/redis.js"
+import {client}   from "../../Utils/redis.js"
 
 
 
@@ -37,9 +37,6 @@ let products = await Product.find().sort({createdAt:-1})
   
 //  }
 })
-
-
-
 
 // get product By Id
 export const getProductbyId = asyncHandler(async (req,res)=>{

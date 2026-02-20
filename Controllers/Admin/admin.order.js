@@ -3,10 +3,10 @@ import mongoose from "mongoose"
 import { Order } from "../../Models/Order.js"
 import { Product } from "../../Models/Product.js"
 import { Cart } from "../../Models/Cart.js"
-import { ApiError } from "../../utils/error.js";
-import { ApiResponse } from "../../utils/response.js";
-import { asyncHandler } from "../../utils/AsyncHandler.js";
-import {client}   from "../../utils/redis.js"
+import { ApiError } from "../../Utils/error.js";
+import { ApiResponse } from "../../Utils/response.js";
+import { asyncHandler } from "../../Utils/asyncHandler.js";
+import {client}   from "../../Utils/redis.js"
 
 // get all orders
 
